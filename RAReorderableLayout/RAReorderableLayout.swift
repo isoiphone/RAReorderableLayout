@@ -262,16 +262,18 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
     // move item
     fileprivate func moveItemIfNeeded() {
         guard let fakeCell = cellFakeView,
-            let atIndexPath = fakeCell.indexPath else { return }
+            let atIndexPath = fakeCell.indexPath,
+            let collectionView = collectionView else { return }
         
         let toIndexPath: IndexPath
-        if let actualCellIndexPath = collectionView!.indexPathForItem(at: fakeCell.center) {
+        if let actualCellIndexPath = collectionView.indexPathForItem(at: fakeCell.center) {
             toIndexPath = actualCellIndexPath
         } else {
+            // drag over header should be equivalent to drag over first item in section
             var dest: IndexPath?
-            for section in 0..<collectionView!.numberOfSections {
+            for section in 0..<collectionView.numberOfSections {
                 let headerIndexPath = IndexPath(item: 0, section: section)
-                guard let headerLayoutAttributes = collectionView!.layoutAttributesForSupplementaryElement(ofKind: UICollectionElementKindSectionHeader, at: headerIndexPath) else { continue }
+                guard let headerLayoutAttributes = collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionElementKindSectionHeader, at: headerIndexPath) else { continue }
                 if headerLayoutAttributes.frame.contains(fakeCell.center) {
                     dest = headerIndexPath
                     break
@@ -283,19 +285,22 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
                 return
             }
         }
+
+        let itemAtToIndexExists = collectionView.numberOfSections > toIndexPath.section && collectionView.numberOfItems(inSection: toIndexPath.section) > toIndexPath.item
         
-        guard atIndexPath != toIndexPath else { return }
+        guard atIndexPath != toIndexPath,
+            itemAtToIndexExists,
+            let attribute = self.layoutAttributesForItem(at: toIndexPath) else { return }
         
         // can move item
-        if let canMove = delegate?.collectionView(collectionView!, at: atIndexPath, canMoveTo: toIndexPath), !canMove {
+        if let canMove = delegate?.collectionView(collectionView, at: atIndexPath, canMoveTo: toIndexPath), !canMove {
             return
         }
-        
+
         // will move item
-        delegate?.collectionView(collectionView!, at: atIndexPath, willMoveTo: toIndexPath)
-        
-        let attribute = self.layoutAttributesForItem(at: toIndexPath)!
-        collectionView!.performBatchUpdates({
+        delegate?.collectionView(collectionView, at: atIndexPath, willMoveTo: toIndexPath)
+
+        collectionView.performBatchUpdates({
             fakeCell.indexPath = toIndexPath
             fakeCell.cellFrame = attribute.frame
             fakeCell.changeBoundsIfNeeded(attribute.bounds)
