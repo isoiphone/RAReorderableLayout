@@ -187,12 +187,12 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
         super.prepare()
         
         // scroll trigger insets
-        if let insets = dataSource?.scrollTriggerEdgeInsetsInCollectionView(self.collectionView!) {
+        if let insets = dataSource?.scrollTriggerEdgeInsetsInCollectionView(collectionView!) {
             triggerInsets = insets
         }
         
         // scroll trier padding
-        if let padding = dataSource?.scrollTriggerPaddingInCollectionView(self.collectionView!) {
+        if let padding = dataSource?.scrollTriggerPaddingInCollectionView(collectionView!) {
             triggerPadding = padding
         }
         
@@ -211,7 +211,6 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
             $0.indexPath == (cellFakeView?.indexPath)
         }.forEach {
             // reordering cell alpha
-            
             $0.alpha = dataSource?.collectionView(self.collectionView!, reorderingItemAlphaInSection: $0.indexPath.section) ?? 0
         }
 
@@ -245,7 +244,7 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
         displayLink = nil
     }
     
-    // begein scroll
+    // begin scroll
     fileprivate func beginScrollIfNeeded() {
         if cellFakeView == nil { return }
         
@@ -271,7 +270,7 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
         guard atIndexPath != toIndexPath else { return }
         
         // can move item
-        if let canMove = delegate?.collectionView(collectionView!, at: atIndexPath, canMoveTo: toIndexPath) , !canMove {
+        if let canMove = delegate?.collectionView(collectionView!, at: atIndexPath, canMoveTo: toIndexPath), !canMove {
             return
         }
         
@@ -289,7 +288,7 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
             
             // did move item
             self.delegate?.collectionView(self.collectionView!, at: atIndexPath, didMoveTo: toIndexPath)
-            }, completion:nil)
+        }, completion:nil)
     }
     
     @objc internal func continuousScroll() {
@@ -321,7 +320,7 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
                 fakeCell.center.x = self.fakeCellCenter!.x + self.panTranslation!.x
                 self.collectionView?.contentOffset.x += scrollRate
             }
-            }, completion: nil)
+        }, completion: nil)
         
         moveItemIfNeeded()
     }
@@ -339,7 +338,7 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
             if let fakeCellEdge = fakeCellTopEdge {
                 percentage = 1.0 - ((fakeCellEdge - (offset + triggerPaddingTop)) / triggerInsetTop)
             }
-        }else if continuousScrollDirection == .toEnd {
+        } else if continuousScrollDirection == .toEnd {
             if let fakeCellEdge = fakeCellEndEdge {
                 percentage = 1.0 - (((insetsTop + offsetEnd - paddingEnd) - (fakeCellEdge + insetsTop)) / triggerInsetEnd)
             }
