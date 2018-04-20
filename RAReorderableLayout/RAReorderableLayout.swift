@@ -431,6 +431,7 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
         
         invalidateDisplayLink()
         
+        cellFakeView!.cellFrame = calculateLayoutAttributesForItem(at: toIndexPath)?.frame ?? cellFakeView!.cellFrame
         cellFakeView!.pushBackView {
             self.cellFakeView!.removeFromSuperview()
             self.cellFakeView = nil
