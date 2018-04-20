@@ -25,6 +25,7 @@ public protocol RAReorderableLayoutDataSource: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     
     func collectionView(_ collectionView: UICollectionView, reorderingItemAlphaInSection section: Int) -> CGFloat
+    func shouldResizeItemWhileReorderingInCollectionView(_ collectionView: UICollectionView) -> Bool
     func scrollTriggerEdgeInsetsInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets
     func scrollTriggerPaddingInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets
     func scrollSpeedValueInCollectionView(_ collectionView: UICollectionView) -> CGFloat
@@ -33,6 +34,9 @@ public protocol RAReorderableLayoutDataSource: UICollectionViewDataSource {
 public extension RAReorderableLayoutDataSource {
     func collectionView(_ collectionView: UICollectionView, reorderingItemAlphaInSection section: Int) -> CGFloat {
         return 0
+    }
+    func shouldResizeItemWhileReorderingInCollectionView(_ collectionView: UICollectionView) -> Bool {
+        return true
     }
     func scrollTriggerEdgeInsetsInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets {
         return .init(top: 100, left: 100, bottom: 100, right: 100)
@@ -303,7 +307,9 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
         collectionView.performBatchUpdates({
             fakeCell.indexPath = toIndexPath
             fakeCell.cellFrame = attribute.frame
-            fakeCell.changeBoundsIfNeeded(attribute.bounds)
+            if dataSource?.shouldResizeItemWhileReorderingInCollectionView(self.collectionView!) != false {
+                fakeCell.changeBoundsIfNeeded(attribute.bounds)
+            }
             
             self.collectionView!.deleteItems(at: [atIndexPath])
             self.collectionView!.insertItems(at: [toIndexPath])
