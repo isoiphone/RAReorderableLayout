@@ -25,8 +25,8 @@ public protocol RAReorderableLayoutDataSource: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     
     func collectionView(_ collectionView: UICollectionView, reorderingItemAlphaInSection section: Int) -> CGFloat
-    func scrollTrigerEdgeInsetsInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets
-    func scrollTrigerPaddingInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets
+    func scrollTriggerEdgeInsetsInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets
+    func scrollTriggerPaddingInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets
     func scrollSpeedValueInCollectionView(_ collectionView: UICollectionView) -> CGFloat
 }
 
@@ -34,10 +34,10 @@ public extension RAReorderableLayoutDataSource {
     func collectionView(_ collectionView: UICollectionView, reorderingItemAlphaInSection section: Int) -> CGFloat {
         return 0
     }
-    func scrollTrigerEdgeInsetsInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets {
+    func scrollTriggerEdgeInsetsInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets {
         return .init(top: 100, left: 100, bottom: 100, right: 100)
     }
-    func scrollTrigerPaddingInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets {
+    func scrollTriggerPaddingInCollectionView(_ collectionView: UICollectionView) -> UIEdgeInsets {
         return  .zero
     }
     func scrollSpeedValueInCollectionView(_ collectionView: UICollectionView) -> CGFloat {
@@ -108,9 +108,9 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
     
     fileprivate var fakeCellCenter: CGPoint?
     
-    fileprivate var trigerInsets = UIEdgeInsetsMake(100.0, 100.0, 100.0, 100.0)
+    fileprivate var triggerInsets = UIEdgeInsetsMake(100.0, 100.0, 100.0, 100.0)
     
-    fileprivate var trigerPadding = UIEdgeInsets.zero
+    fileprivate var triggerPadding = UIEdgeInsets.zero
     
     fileprivate var scrollSpeedValue: CGFloat = 10.0
     
@@ -154,19 +154,19 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
     }
     
     fileprivate var triggerInsetTop: CGFloat {
-        return scrollDirection == .vertical ? trigerInsets.top : trigerInsets.left
+        return scrollDirection == .vertical ? triggerInsets.top : triggerInsets.left
     }
     
     fileprivate var triggerInsetEnd: CGFloat {
-        return scrollDirection == .vertical ? trigerInsets.top : trigerInsets.left
+        return scrollDirection == .vertical ? triggerInsets.top : triggerInsets.left
     }
     
     fileprivate var triggerPaddingTop: CGFloat {
-        return scrollDirection == .vertical ? trigerPadding.top : trigerPadding.left
+        return scrollDirection == .vertical ? triggerPadding.top : triggerPadding.left
     }
     
     fileprivate var triggerPaddingEnd: CGFloat {
-        return scrollDirection == .vertical ? trigerPadding.bottom : trigerPadding.right
+        return scrollDirection == .vertical ? triggerPadding.bottom : triggerPadding.right
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -187,13 +187,13 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
         super.prepare()
         
         // scroll trigger insets
-        if let insets = dataSource?.scrollTrigerEdgeInsetsInCollectionView(self.collectionView!) {
-            trigerInsets = insets
+        if let insets = dataSource?.scrollTriggerEdgeInsetsInCollectionView(self.collectionView!) {
+            triggerInsets = insets
         }
         
         // scroll trier padding
-        if let padding = dataSource?.scrollTrigerPaddingInCollectionView(self.collectionView!) {
-            trigerPadding = padding
+        if let padding = dataSource?.scrollTriggerPaddingInCollectionView(self.collectionView!) {
+            triggerPadding = padding
         }
         
         // scroll speed value
