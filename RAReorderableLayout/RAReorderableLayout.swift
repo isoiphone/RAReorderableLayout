@@ -65,8 +65,29 @@ public extension RAReorderableLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, collectionView layout: RAReorderableLayout, didEndDraggingItemTo indexPath: IndexPath) {}
 }
 
+extension UICollectionView {
+    func hasItemAt(indexPath: IndexPath) -> Bool {
+        return (numberOfSections > indexPath.section) && (numberOfItems(inSection: indexPath.section) > indexPath.item)
+    }
+}
+
 open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerDelegate {
-    
+    fileprivate func calculateLayoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        guard let collectionView = collectionView else { return nil }
+        if collectionView.hasItemAt(indexPath: indexPath) {
+            return layoutAttributesForItem(at: indexPath)
+        }
+
+        // item doesnt exist, lets estimate its position/size using header
+        guard indexPath.row == 0,
+            let headerLayoutAttributes = collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionElementKindSectionHeader, at: indexPath) else { return nil }
+        
+        let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+        attributes.frame = headerLayoutAttributes.frame
+        attributes.bounds = headerLayoutAttributes.bounds
+        return attributes
+    }
+
     fileprivate enum direction {
         case toTop
         case toEnd
@@ -290,11 +311,8 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
             }
         }
 
-        let itemAtToIndexExists = collectionView.numberOfSections > toIndexPath.section && collectionView.numberOfItems(inSection: toIndexPath.section) > toIndexPath.item
-        
         guard atIndexPath != toIndexPath,
-            itemAtToIndexExists,
-            let attribute = self.layoutAttributesForItem(at: toIndexPath) else { return }
+            let attribute = calculateLayoutAttributesForItem(at: toIndexPath) else { return }
         
         // can move item
         if let canMove = delegate?.collectionView(collectionView, at: atIndexPath, canMoveTo: toIndexPath), !canMove {
