@@ -262,9 +262,26 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
     // move item
     fileprivate func moveItemIfNeeded() {
         guard let fakeCell = cellFakeView,
-            let atIndexPath = fakeCell.indexPath,
-            let toIndexPath = collectionView!.indexPathForItem(at: fakeCell.center) else {
+            let atIndexPath = fakeCell.indexPath else { return }
+        
+        let toIndexPath: IndexPath
+        if let actualCellIndexPath = collectionView!.indexPathForItem(at: fakeCell.center) {
+            toIndexPath = actualCellIndexPath
+        } else {
+            var dest: IndexPath?
+            for section in 0..<collectionView!.numberOfSections {
+                let headerIndexPath = IndexPath(item: 0, section: section)
+                guard let headerLayoutAttributes = collectionView!.layoutAttributesForSupplementaryElement(ofKind: UICollectionElementKindSectionHeader, at: headerIndexPath) else { continue }
+                if headerLayoutAttributes.frame.contains(fakeCell.center) {
+                    dest = headerIndexPath
+                    break
+                }
+            }
+            if let dest = dest {
+                toIndexPath = dest
+            } else {
                 return
+            }
         }
         
         guard atIndexPath != toIndexPath else { return }
