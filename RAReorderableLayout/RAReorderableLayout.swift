@@ -353,22 +353,22 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
     // gesture recognizers
     fileprivate func setUpGestureRecognizers() {
         guard let collectionView = collectionView else { return }
-        guard longPress == nil && panGesture == nil else {return }
+        guard longPress == nil && panGesture == nil else { return }
         
         longPress = UILongPressGestureRecognizer(target: self, action: #selector(RAReorderableLayout.handleLongPress(_:)))
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(RAReorderableLayout.handlePanGesture(_:)))
         longPress?.delegate = self
         panGesture?.delegate = self
         panGesture?.maximumNumberOfTouches = 1
-        let gestures: NSArray! = collectionView.gestureRecognizers as NSArray!
-        gestures.enumerateObjects(options: []) { gestureRecognizer, index, finish in
+        let gestureRecognizers = collectionView.gestureRecognizers ?? []
+        for gestureRecognizer in gestureRecognizers {
             if gestureRecognizer is UILongPressGestureRecognizer {
                 (gestureRecognizer as AnyObject).require(toFail: self.longPress!)
             }
             collectionView.addGestureRecognizer(self.longPress!)
             collectionView.addGestureRecognizer(self.panGesture!)
-            }
         }
+    }
     
     open func cancelDrag() {
         cancelDrag(nil)
