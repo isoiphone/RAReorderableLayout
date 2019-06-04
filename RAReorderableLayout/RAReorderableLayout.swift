@@ -80,7 +80,7 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
 
         // item doesnt exist, lets estimate its position/size using header
         guard indexPath.row == 0,
-            let headerLayoutAttributes = collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionElementKindSectionHeader, at: indexPath) else { return nil }
+            let headerLayoutAttributes = collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: indexPath) else { return nil }
         
         let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
         attributes.frame = headerLayoutAttributes.frame
@@ -133,7 +133,7 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
     
     fileprivate var fakeCellCenter: CGPoint?
     
-    fileprivate var triggerInsets = UIEdgeInsetsMake(100.0, 100.0, 100.0, 100.0)
+    fileprivate var triggerInsets = UIEdgeInsets(top: 100, left: 100, bottom: 100, right: 100)
     
     fileprivate var triggerPadding = UIEdgeInsets.zero
     
@@ -260,7 +260,7 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
         }
         
         displayLink = CADisplayLink(target: self, selector: #selector(RAReorderableLayout.continuousScroll))
-        displayLink!.add(to: RunLoop.main, forMode: RunLoopMode.commonModes)
+        displayLink!.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
     }
     
     fileprivate func invalidateDisplayLink() {
@@ -298,7 +298,7 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
             var dest: IndexPath?
             for section in 0..<collectionView.numberOfSections {
                 let headerIndexPath = IndexPath(item: 0, section: section)
-                guard let headerLayoutAttributes = collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionElementKindSectionHeader, at: headerIndexPath) else { continue }
+                guard let headerLayoutAttributes = collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: headerIndexPath) else { continue }
                 if headerLayoutAttributes.frame.contains(fakeCell.center) {
                     dest = headerIndexPath
                     break
@@ -565,11 +565,11 @@ private class RACellFakeView: UIView {
         layer.shouldRasterize = false
         
         cellFakeImageView = UIImageView(frame: self.bounds)
-        cellFakeImageView?.contentMode = UIViewContentMode.scaleAspectFill
+        cellFakeImageView?.contentMode = .scaleAspectFill
         cellFakeImageView?.autoresizingMask = [.flexibleWidth , .flexibleHeight]
         
         cellFakeHightedView = UIImageView(frame: self.bounds)
-        cellFakeHightedView?.contentMode = UIViewContentMode.scaleAspectFill
+        cellFakeHightedView?.contentMode = .scaleAspectFill
         cellFakeHightedView?.autoresizingMask = [.flexibleWidth , .flexibleHeight]
         
         cell.isHighlighted = true
@@ -608,7 +608,7 @@ private class RACellFakeView: UIView {
                 shadowAnimation.fromValue = 0
                 shadowAnimation.toValue = 0.7
                 shadowAnimation.isRemovedOnCompletion = false
-                shadowAnimation.fillMode = kCAFillModeForwards
+                shadowAnimation.fillMode = CAMediaTimingFillMode.forwards
                 self.layer.add(shadowAnimation, forKey: "applyShadow")
             },
             completion: { _ in
@@ -629,7 +629,7 @@ private class RACellFakeView: UIView {
                 shadowAnimation.fromValue = 0.7
                 shadowAnimation.toValue = 0
                 shadowAnimation.isRemovedOnCompletion = false
-                shadowAnimation.fillMode = kCAFillModeForwards
+                shadowAnimation.fillMode = CAMediaTimingFillMode.forwards
                 self.layer.add(shadowAnimation, forKey: "removeShadow")
             },
             completion: { _ in
