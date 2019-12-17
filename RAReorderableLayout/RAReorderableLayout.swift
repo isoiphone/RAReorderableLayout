@@ -111,11 +111,11 @@ open class RAReorderableLayout: UICollectionViewFlowLayout, UIGestureRecognizerD
     
      public weak var delegate: RAReorderableLayoutDelegate? {
         get { return collectionView?.delegate as? RAReorderableLayoutDelegate }
-        set { collectionView?.delegate = delegate }
+        set { collectionView?.delegate = newValue }
     }
     
      public weak var dataSource: RAReorderableLayoutDataSource? {
-        set { collectionView?.dataSource = dataSource }
+        set { collectionView?.dataSource = newValue }
         get { return collectionView?.dataSource as? RAReorderableLayoutDataSource }
     }
     
